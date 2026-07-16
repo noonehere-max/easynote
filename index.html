@@ -7,27 +7,96 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="app">
+    <!-- Fondo animado detrás del cristal -->
+    <div class="bg-blobs" aria-hidden="true">
+        <div class="blob blob--1"></div>
+        <div class="blob blob--2"></div>
+        <div class="blob blob--3"></div>
+    </div>
+
+    <!-- Splash / animación de inicio -->
+    <div class="splash" id="splash">
+        <div class="splash-logo">
+            <div class="splash-orbit"></div>
+            <div class="splash-orbit splash-orbit--delay"></div>
+            <div class="splash-core">
+                <span>N</span>
+            </div>
+        </div>
+        <h1 class="splash-title">Easy Note</h1>
+        <p class="splash-subtitle">Tus ideas, suavemente guardadas</p>
+    </div>
+
+    <!-- Login -->
+    <div class="login-screen hidden" id="loginScreen">
+        <div class="login-card">
+            <div class="login-logo">
+                <div class="splash-core splash-core--small">
+                    <span>N</span>
+                </div>
+            </div>
+            <h2 class="login-title">Bienvenido</h2>
+            <p class="login-hint">Inicia sesión para continuar</p>
+
+            <form class="login-form" id="loginForm" autocomplete="off">
+                <div class="neu-field">
+                    <label for="loginUser">Usuario</label>
+                    <input type="text" id="loginUser" placeholder="Tu usuario" autocomplete="off" required>
+                </div>
+                <div class="neu-field">
+                    <label for="loginPass">Contraseña</label>
+                    <input type="password" id="loginPass" placeholder="••••••" autocomplete="off" required>
+                </div>
+                <button type="submit" class="neu-btn neu-btn--primary" id="btnLogin">
+                    Entrar
+                </button>
+            </form>
+
+            <div class="login-divider">
+                <span>o</span>
+            </div>
+
+            <button class="neu-btn neu-btn--ghost" id="btnRegister">
+                Crear cuenta
+            </button>
+
+            <p class="login-demo" id="loginDemoHint">Demo: usuario <strong>admin</strong> / contraseña <strong>1234</strong></p>
+        </div>
+    </div>
+
+    <!-- App principal -->
+    <div class="application hidden" id="application">
         <aside class="sidebar">
             <div class="sidebar-header">
                 <div class="logo">
-                    <span class="logo-mark"></span>
+                    <div class="logo-mark">
+                        <span>N</span>
+                    </div>
                     <h1>Easy Note</h1>
                 </div>
-                <button class="btn-icon" id="btnTheme" title="Cambiar tema">
+                <button class="neu-icon-btn" id="btnTheme" title="Cambiar tema">
                     <span id="themeIcon">☾</span>
                 </button>
             </div>
 
+            <div class="sidebar-user">
+                <div class="user-avatar" id="userAvatar"></div>
+                <div class="user-info">
+                    <span class="user-name" id="userName">Usuario</span>
+                    <button class="logout-link" id="btnLogout">Cerrar sesión</button>
+                </div>
+            </div>
+
             <div class="sidebar-tools">
-                <button class="btn-new" id="btnNew">
+                <button class="neu-btn neu-btn--primary" id="btnNew">
+                    <span class="btn-icon-plus">+</span>
                     <span>Nueva nota</span>
                 </button>
-                <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="Buscar..." autocomplete="off">
+                <div class="neu-field neu-field--small">
+                    <input type="text" id="searchInput" placeholder="Buscar notas..." autocomplete="off">
                 </div>
             </div>
 
@@ -36,21 +105,49 @@
 
         <main class="main-content">
             <div class="empty-state" id="emptyState">
-                <div class="empty-circle"></div>
+                <div class="empty-shape">
+                    <div class="empty-paper"></div>
+                    <div class="empty-pencil"></div>
+                </div>
                 <h2>Escribe algo</h2>
-                <p>Tus notas se guardan automáticamente.</p>
+                <p>Tus notas se guardan automáticamente en este dispositivo.</p>
             </div>
 
-            <div class="editor" id="editor">
+            <div class="note-editor hidden" id="noteEditor">
                 <div class="editor-header">
                     <input type="text" id="noteTitle" class="note-title" placeholder="Título" autocomplete="off">
-                    <button class="btn-icon btn-delete" id="btnDelete" title="Eliminar">
-                        ✕
-                    </button>
+                    <div class="editor-actions">
+                        <button class="neu-icon-btn" id="btnCopy" title="Copiar contenido">⎘</button>
+                        <button class="neu-icon-btn neu-icon-btn--danger" id="btnDelete" title="Eliminar">✕</button>
+                    </div>
                 </div>
                 <textarea id="noteBody" class="note-body" placeholder="Escribe aquí..."></textarea>
+                <div class="editor-footer">
+                    <span id="noteDate"></span>
+                </div>
             </div>
         </main>
+    </div>
+
+    <!-- Modal de registro -->
+    <div class="modal-overlay hidden" id="registerModal">
+        <div class="neu-card">
+            <h3>Crear cuenta</h3>
+            <form class="login-form" id="registerForm" autocomplete="off">
+                <div class="neu-field">
+                    <label for="regUser">Usuario</label>
+                    <input type="text" id="regUser" placeholder="Elige un usuario" autocomplete="off" required>
+                </div>
+                <div class="neu-field">
+                    <label for="regPass">Contraseña</label>
+                    <input type="password" id="regPass" placeholder="Mínimo 4 caracteres" autocomplete="off" required minlength="4">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="neu-btn neu-btn--ghost" id="btnCancelRegister">Cancelar</button>
+                    <button type="submit" class="neu-btn neu-btn--primary">Registrar</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <div class="toast" id="toast"></div>
